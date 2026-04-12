@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Discipline System</title>
+  
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+    
+    .layout {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      width: 320px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    
+    .stats {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #2d6cdf;
+      color: white;
+    }
+    
+    button:hover {
+      background: #1f55b5;
+    }
+    
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    #msg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <h1 style="text-align:center;">Discipline System</h1>
+  
+  <div class="layout">
+    
+    <!-- LEFT PANEL -->
+    <div class="card">
+      
+      <div class="stats">Days: <span id="days">0</span></div>
+      <div class="stats">Points: <span id="points">0</span></div>
+      <div class="stats">Streak: <span id="streak">0</span></div>
+      
+      <hr>
+      
+      <div class="stats">Lectures (0–5): <span id="lectures">0</span></div>
+      <div class="stats">Extra Lectures: <span id="extraLectures">0</span></div>
+      
+      <div class="stats">Revisions (0–5): <span id="revisions">0</span></div>
+      
+      
+      <hr>
+      
+      <button id="lectureBtn">Lecture Done (+5)</button>
+      <button id="revisionBtn">Revision Done (+7)</button>
+      <button id="extraRevBtn">Extra Revision (+7)</button>
+      
+      <button id="mbBtn">MB (-3)</button>
+      
+      
+      <button id="endDayBtn">End Day</button>
+      
+      <hr>
+      
+      <div class="section-title">Shop</div>
+      
+      <button id="snackBtn">Snacks (5-day streak)</button>
+      <button id="foodBtn">Food (≥500 pts)</button>
+      <button id="restBtn">Restaurant (≥1500 pts)</button>
+      
+      
+      
+    </div>
+    
+    <!-- RIGHT PANEL -->
+    <div class="card">
+      
+      <div class="section-title">Total Progress</div>
+      
+      <div class="stats">Total Lectures: <span id="totalLectures">0</span></div>
+      <div class="stats">Total Revisions: <span id="totalRevisions">0</span></div>
+      
+    </div>
+    
+  </div>
+  
+  <div id="msg" style="text-align:center;"></div>
+  
+  <script>
+    // DATA
+    let points = parseInt(localStorage.getItem("points")) || 0;
+    let streak = parseInt(localStorage.getItem("streak")) || 0;
+    let days = parseInt(localStorage.getItem("days")) || 0;
+    
+    // DAILY
+    let lectures = 0;
+    let revisions = 0;
+    
+    // EXTRA
+    let extraLectures = parseInt(localStorage.getItem("extraLectures")) || 0;
+    
+    // TOTAL
+    let totalLectures = parseInt(localStorage.getItem("totalLectures")) || 0;
+    let totalRevisions = parseInt(localStorage.getItem("totalRevisions")) || 0;
+    
+    // UI
+    function updateUI() {
+      document.getElementById("points").innerText = points;
+      document.getElementById("streak").innerText = streak;
+      document.getElementById("days").innerText = days;
+      
+      document.getElementById("lectures").innerText = lectures;
+      document.getElementById("revisions").innerText = revisions;
+      
+      document.getElementById("extraLectures").innerText = extraLectures;
+      
+      document.getElementById("totalLectures").innerText = totalLectures;
+      document.getElementById("totalRevisions").innerText = totalRevisions;
+    }
+    
+    function save() {
+      localStorage.setItem("points", points);
+      localStorage.setItem("streak", streak);
+      localStorage.setItem("days", days);
+      localStorage.setItem("extraLectures", extraLectures);
+      localStorage.setItem("totalLectures", totalLectures);
+      localStorage.setItem("totalRevisions", totalRevisions);
+      
+      updateUI();
+    }
+    
+    function msg(text) {
+      document.getElementById("msg").innerText = text;
+    }
+    
+    // LECTURES
+    document.getElementById("lectureBtn").addEventListener("click", () => {
+      
+      if (lectures < 5) {
+        lectures++;
+      } else {
+        extraLectures++;
+      }
+      
+      totalLectures++;
+      points += 5;
+      save();
+    });
+    
+    // REVISIONS
+    document.getElementById("revisionBtn").addEventListener("click", () => {
+  
+  if (revisions < lectures) {
+    revisions++;
+    totalRevisions++;
+    points += 7;
+    msg("Structured revision (today's lectures)");
+  } else {
+    msg("Cap reached for structured revision");
+  }
+  
+  save(); // ALWAYS save
+});
+    
+    document.getElementById("extraRevBtn").addEventListener("click", () => {
+  
+  // always allowed
+  totalRevisions++;
+  points += 7;
+  
+  msg("Extra revision (old topics / revision boost)");
+  save();
+});
+    // PENALTIES
+    document.getElementById("mbBtn").addEventListener("click", () => {
+      points -= 3;
+      save();
+    });
+    
+    
+    
+    // END DAY
+    document.getElementById("endDayBtn").addEventListener("click", () => {
+  
+  days++;
+  
+  // streak logic
+  if (lectures >= 5 && revisions >= 5) {
+    streak++;
+  } else {
+    streak = 0;
+  }
+  
+  // 🔥 AUTO PENALTY SYSTEM
+  
+  let message = "";
+
+if (lectures < 5) {
+  let missedLectures = 5 - lectures;
+  points -= missedLectures * 2;
+  message += `Missed lectures: ${missedLectures} (-${missedLectures * 2} pts)\n`;
+}
+
+if (revisions < 5) {
+  let missedRevisions = 5 - revisions;
+  points -= missedRevisions * 3;
+  message += `Missed revisions: ${missedRevisions} (-${missedRevisions * 3} pts)\n`;
+}
+
+msg(message);
+  
+  // reset daily counters
+  lectures = 0;
+  revisions = 0;
+  
+  save();
+});
+    
+    // SHOP
+    document.getElementById("snackBtn").addEventListener("click", () => {
+      if (streak >= 5) {
+        streak = 0;
+        msg("Snacks unlocked");
+      } else {
+        msg("Need 5-day streak");
+      }
+      save();
+    });
+    
+    document.getElementById("foodBtn").addEventListener("click", () => {
+      if (points >= 500) {
+        points -= 250;
+        msg("Food allowed");
+      } else {
+        msg("Not enough points");
+      }
+      save();
+    });
+    
+    document.getElementById("restBtn").addEventListener("click", () => {
+      if (points >= 1500) {
+        points -= 1500;
+        msg("Enjoy dinner");
+      } else {
+        msg("Not enough points");
+      }
+      save();
+    });
+    
+    updateUI();
+    
+  </script>
+
+  
+  
+</body>
+
+</html>
