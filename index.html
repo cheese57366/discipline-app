@@ -100,6 +100,10 @@
       <button id="snackBtn">Snacks (5-day streak)</button>
       <button id="foodBtn">Food (≥500 pts)</button>
       <button id="restBtn">Restaurant (≥1500 pts)</button>
+
+      <hr>
+
+      <button id="resetBtn">Reset</button>
       
       
       
@@ -281,6 +285,29 @@ msg(message);
     });
     
     updateUI();
+    document.getElementById("resetBtn").addEventListener("click", () => {
+
+  let confirmReset = confirm("This will reset everything. Start fresh?");
+  if (!confirmReset) return;
+
+  // wipe storage completely
+  localStorage.clear();
+
+  // reset variables
+  points = 0;
+  streak = 0;
+  days = 0;
+  lectures = 0;
+  revisions = 0;
+  totalLectures = 0;
+  totalRevisions = 0;
+  extraLectures = 0;
+
+  // update UI instantly
+  updateUI();
+
+  msg("Fresh start activated");
+});
     
   </script>
 
