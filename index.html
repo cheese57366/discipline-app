@@ -3,369 +3,276 @@
 
 <head>
   <title>Discipline System</title>
-  
-    <style>
+
+  <style>
+    body {
+      font-family: -apple-system, sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .layout {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .stats {
+      margin: 6px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 10px;
+      background: #4f46e5;
+      color: white;
+      font-size: 14px;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #msg {
+      margin-top: 10px;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+
     #floating {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  pointer-events: none;
-  font-weight: bold;
-  font-size: 20px;
-  color: #22c55e;
-}
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      pointer-events: none;
+      font-size: 20px;
+      font-weight: bold;
+      color: #22c55e;
+    }
 
-@keyframes floatUp {
-  0% { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -80px); }
-}
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(-50%,0); }
+      100% { opacity: 0; transform: translate(-50%,-80px); }
+    }
 
-.float {
-  animation: floatUp 0.8s ease forwards;
-}
+    .float {
+      animation: floatUp 0.8s ease forwards;
+    }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
-  margin: 0;
-  padding: 20px;
-  color: #111;
-}
+    .glow {
+      color: #22c55e;
+      text-shadow: 0 0 8px rgba(34,197,94,0.6);
+    }
 
-/* Layout */
-.layout {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+    .level-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: #eef2ff;
+      border-radius: 10px;
+    }
 
-/* Cards */
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 18px;
-  width: 320px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-}
-
-/* Stats */
-.stats {
-  font-size: 16px;
-  margin: 8px 0;
-}
-
-/* Buttons */
-button {
-  width: 100%;
-  padding: 14px;
-  margin: 6px 0;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 500;
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: white;
-  transition: all 0.15s ease;
-}
-
-/* Button press effect */
-button:active {
-  transform: scale(0.95);
-  opacity: 0.85;
-}
-
-/* Section title */
-.section-title {
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-/* Message */
-#msg {
-  margin-top: 12px;
-  font-weight: 600;
-  color: #4f46e5;
-  white-space: pre-line;
-}
-
-/* 🔥 POINT ANIMATION */
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
-}
-
-.pop {
-  animation: pop 0.25s ease;
-}
-
-/* 🔥 STREAK GLOW */
-.glow {
-  color: #22c55e;
-  text-shadow: 0 0 8px rgba(34,197,94,0.6);
-}
-
-</style>
+  </style>
 </head>
 
 <body>
-  
-  <h1 style="text-align:center;">Discipline System</h1>
-  
-  <div class="layout">
-    
-    <!-- LEFT PANEL -->
-    <div class="card">
-      
-      <div class="stats">Days: <span id="days">0</span></div>
-      <div class="stats">Points: <span id="points">0</span></div>
-      <div class="stats">Streak: <span id="streak">0</span></div>
-      
-      <hr>
-      
-      <div class="stats">Lectures (0–5): <span id="lectures">0</span></div>
-      <div class="stats">Extra Lectures: <span id="extraLectures">0</span></div>
-      
-      <div class="stats">Revisions (0–5): <span id="revisions">0</span></div>
-      
-      
-      <hr>
-      
-      <button id="lectureBtn">Lecture Done (+5)</button>
-      <button id="revisionBtn">Revision Done (+7)</button>
-      <button id="extraRevBtn">Extra Revision (+7)</button>
-      
-      <button id="mbBtn">MB (-3)</button>
-      
-      
-      <button id="endDayBtn">End Day</button>
-      
-      <hr>
-      
-      <div class="section-title">Shop</div>
-      
-      <button id="snackBtn">Snacks (5-day streak)</button>
-      <button id="foodBtn">Food (≥500 pts)</button>
-      <button id="restBtn">Restaurant (≥1500 pts)</button>
-      
-      
-      
+
+<h1>Discipline System</h1>
+
+<div class="layout">
+
+  <div class="card">
+
+    <div class="stats">Days: <span id="days">0</span></div>
+    <div class="stats">Points: <span id="points">0</span></div>
+    <div class="stats">Streak: <span id="streak">0</span></div>
+
+    <div class="level-box">
+      <div>Level: <span id="level">1</span></div>
+      <div>XP: <span id="xp">0</span> / <span id="xpReq">100</span></div>
     </div>
-    
-    <!-- RIGHT PANEL -->
-    <div class="card">
-      
-      <div class="section-title">Total Progress</div>
-      
-      <div class="stats">Total Lectures: <span id="totalLectures">0</span></div>
-      <div class="stats">Total Revisions: <span id="totalRevisions">0</span></div>
-      
-    </div>
-    
+
+    <hr>
+
+    <div class="stats">Lectures: <span id="lectures">0</span></div>
+    <div class="stats">Revisions: <span id="revisions">0</span></div>
+
+    <hr>
+
+    <button id="lectureBtn">Lecture (+5)</button>
+    <button id="revisionBtn">Revision (+7)</button>
+    <button id="extraRevBtn">Extra Revision (+7)</button>
+    <button id="mbBtn">MB (-3)</button>
+    <button id="endDayBtn">End Day</button>
+
+    <hr>
+
+    <button id="resetBtn" style="background:#ef4444;">Reset</button>
+
   </div>
-  
-  <div id="msg" style="text-align:center;"></div>
-  
-  <script>
-    // DATA
-    let points = parseInt(localStorage.getItem("points")) || 0;
-    let streak = parseInt(localStorage.getItem("streak")) || 0;
-    let days = parseInt(localStorage.getItem("days")) || 0;
-    
-    // DAILY
-    let lectures = 0;
-    let revisions = 0;
-    
-    // EXTRA
-    let extraLectures = parseInt(localStorage.getItem("extraLectures")) || 0;
-    
-    // TOTAL
-    let totalLectures = parseInt(localStorage.getItem("totalLectures")) || 0;
-    let totalRevisions = parseInt(localStorage.getItem("totalRevisions")) || 0;
-    
-    // UI
-    function updateUI() {
-      let pointsEl = document.getElementById("points");
-pointsEl.innerText = points;
 
-// animate points
-pointsEl.classList.add("pop");
-setTimeout(() => pointsEl.classList.remove("pop"), 200);
-      let streakEl = document.getElementById("streak");
-streakEl.innerText = streak;
+</div>
 
-if (streak >= 3) {
-  streakEl.classList.add("glow");
-} else {
-  streakEl.classList.remove("glow");
-}
-      document.getElementById("days").innerText = days;
-      
-      document.getElementById("lectures").innerText = lectures;
-      document.getElementById("revisions").innerText = revisions;
-      
-      document.getElementById("extraLectures").innerText = extraLectures;
-      
-      document.getElementById("totalLectures").innerText = totalLectures;
-      document.getElementById("totalRevisions").innerText = totalRevisions;
-    }
-    
-    function save() {
-      localStorage.setItem("points", points);
-      localStorage.setItem("streak", streak);
-      localStorage.setItem("days", days);
-      localStorage.setItem("extraLectures", extraLectures);
-      localStorage.setItem("totalLectures", totalLectures);
-      localStorage.setItem("totalRevisions", totalRevisions);
-      
-      updateUI();
-    }
-    
-    function msg(text) {
-      document.getElementById("msg").innerText = text;
-    }
-    
-    // LECTURES
-    document.getElementById("lectureBtn").addEventListener("click", () => {
-      
-      if (lectures < 5) {
-        lectures++;
-      } else {
-        extraLectures++;
-      }
-      
-      totalLectures++;
-      points += 5;
-      save();
-    });
-    
-    // REVISIONS
-    document.getElementById("revisionBtn").addEventListener("click", () => {
-  
-  if (revisions < lectures) {
-    revisions++;
-    totalRevisions++;
-    points += 7;
-    msg("Structured revision (today's lectures)");
-  } else {
-    msg("Cap reached for structured revision");
-  }
-  
-  save(); // ALWAYS save
-});
-    
-    document.getElementById("extraRevBtn").addEventListener("click", () => {
-  
-  // always allowed
-  totalRevisions++;
-  points += 7;
-  
-  msg("Extra revision (old topics / revision boost)");
-  save();
-});
-    // PENALTIES
-    document.getElementById("mbBtn").addEventListener("click", () => {
-      points -= 3;
-      save();
-    });
-    
-    
-    
-    // END DAY
-    document.getElementById("endDayBtn").addEventListener("click", () => {
-  
-  days++;
-  
-  // streak logic
-  if (lectures >= 5 && revisions >= 5) {
-    streak++;
-  } else {
-    streak = 0;
-  }
-  if (!(lectures >= 5 && revisions >= 5)) {
-  msg("⚠️ Streak will break!");
-}
-  
-  // 🔥 AUTO PENALTY SYSTEM
-  
-  let message = "";
+<div id="msg"></div>
+<div id="floating"></div>
 
-if (lectures < 5) {
-  let missedLectures = 5 - lectures;
-  points -= missedLectures * 2;
-  message += `Missed lectures: ${missedLectures} (-${missedLectures * 2} pts)\n`;
+<script>
+
+// DATA
+let points = +localStorage.getItem("points") || 0;
+let streak = +localStorage.getItem("streak") || 0;
+let days = +localStorage.getItem("days") || 0;
+
+let xp = +localStorage.getItem("xp") || 0;
+let level = +localStorage.getItem("level") || 1;
+
+let lectures = 0;
+let revisions = 0;
+
+// UI
+function updateUI() {
+  document.getElementById("points").innerText = points;
+  document.getElementById("streak").innerText = streak;
+  document.getElementById("days").innerText = days;
+
+  document.getElementById("lectures").innerText = lectures;
+  document.getElementById("revisions").innerText = revisions;
+
+  document.getElementById("level").innerText = level;
+  document.getElementById("xp").innerText = xp;
+
+  let xpReq = level * 100;
+  document.getElementById("xpReq").innerText = xpReq;
+
+  let streakEl = document.getElementById("streak");
+  if (streak >= 3) streakEl.classList.add("glow");
+  else streakEl.classList.remove("glow");
 }
 
-if (revisions < 5) {
-  let missedRevisions = 5 - revisions;
-  points -= missedRevisions * 3;
-  message += `Missed revisions: ${missedRevisions} (-${missedRevisions * 3} pts)\n`;
+// SAVE
+function save() {
+  localStorage.setItem("points", points);
+  localStorage.setItem("streak", streak);
+  localStorage.setItem("days", days);
+  localStorage.setItem("xp", xp);
+  localStorage.setItem("level", level);
+  updateUI();
 }
 
-msg(message);
-  
-  // reset daily counters
-  lectures = 0;
-  revisions = 0;
-  
-  save();
-  if (lectures >= 5 && revisions >= 5) {
-  msg("🔥 Day Completed! Streak Increased!");
-  showFloat("🔥 +STREAK");
-}
-});
-    
-    // SHOP
-    document.getElementById("snackBtn").addEventListener("click", () => {
-      if (streak >= 5) {
-        streak = 0;
-        msg("Snacks unlocked");
-      } else {
-        msg("Need 5-day streak");
-      }
-      save();
-    });
-    
-    document.getElementById("foodBtn").addEventListener("click", () => {
-      if (points >= 500) {
-        points -= 250;
-        msg("Food allowed");
-      } else {
-        msg("Not enough points");
-      }
-      save();
-    });
-    
-    document.getElementById("restBtn").addEventListener("click", () => {
-      if (points >= 1500) {
-        points -= 1500;
-        msg("Enjoy dinner");
-      } else {
-        msg("Not enough points");
-      }
-      save();
-    });
-    
-    updateUI();
-    
-    function showFloat(text) {
+// FLOAT
+function showFloat(text) {
   let el = document.getElementById("floating");
   el.innerText = text;
   el.classList.remove("float");
   void el.offsetWidth;
   el.classList.add("float");
 }
-  </script>
 
-  
-  <div id="floating"></div>
+// LEVEL SYSTEM
+function addXP(amount) {
+  xp += amount;
+  let xpReq = level * 100;
+
+  if (xp >= xpReq) {
+    xp -= xpReq;
+    level++;
+    showFloat("LEVEL UP!");
+  }
+}
+
+// BUTTONS
+document.getElementById("lectureBtn").onclick = () => {
+  lectures++;
+  points += 5;
+  addXP(5);
+  showFloat("+5");
+  save();
+};
+
+document.getElementById("revisionBtn").onclick = () => {
+  if (revisions < lectures) {
+    revisions++;
+    points += 7;
+    addXP(7);
+    showFloat("+7");
+  }
+  save();
+};
+
+document.getElementById("extraRevBtn").onclick = () => {
+  points += 7;
+  addXP(7);
+  showFloat("+7");
+  save();
+};
+
+document.getElementById("mbBtn").onclick = () => {
+  points -= 3;
+  showFloat("-3");
+  save();
+};
+
+// END DAY
+document.getElementById("endDayBtn").onclick = () => {
+
+  days++;
+
+  if (lectures >= 5 && revisions >= 5) {
+    streak++;
+    showFloat("🔥 +STREAK");
+    document.getElementById("msg").innerText = "Day Completed!";
+  } else {
+    streak = 0;
+    document.getElementById("msg").innerText = "⚠️ Streak Broken";
+  }
+
+  // penalties
+  if (lectures < 5) points -= (5 - lectures) * 2;
+  if (revisions < 5) points -= (5 - revisions) * 3;
+
+  lectures = 0;
+  revisions = 0;
+
+  save();
+};
+
+// RESET
+document.getElementById("resetBtn").onclick = () => {
+  let confirmReset = prompt("Type RESET to confirm");
+
+  if (confirmReset !== "RESET") return;
+
+  localStorage.clear();
+
+  points = 0;
+  streak = 0;
+  days = 0;
+  xp = 0;
+  level = 1;
+  lectures = 0;
+  revisions = 0;
+
+  showFloat("RESET");
+  document.getElementById("msg").innerText = "Fresh Start";
+
+  updateUI();
+};
+
+updateUI();
+
+</script>
+
 </body>
-
 </html>
