@@ -5,60 +5,114 @@
   <title>Discipline System</title>
   
     <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 20px;
-      color: #222;
-    }
-    
-    .layout {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      width: 320px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      text-align: center;
-    }
-    
-    .stats {
-      font-size: 16px;
-      margin: 6px 0;
-    }
-    
-    button {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      background: #2d6cdf;
-      color: white;
-    }
-    
-    button:hover {
-      background: #1f55b5;
-    }
-    
-    .section-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    
-    #msg {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
+    #floating {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  font-weight: bold;
+  font-size: 20px;
+  color: #22c55e;
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -80px); }
+}
+
+.float {
+  animation: floatUp 0.8s ease forwards;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  margin: 0;
+  padding: 20px;
+  color: #111;
+}
+
+/* Layout */
+.layout {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  width: 320px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* Stats */
+.stats {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 6px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  transition: all 0.15s ease;
+}
+
+/* Button press effect */
+button:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+/* Section title */
+.section-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Message */
+#msg {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #4f46e5;
+  white-space: pre-line;
+}
+
+/* 🔥 POINT ANIMATION */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.pop {
+  animation: pop 0.25s ease;
+}
+
+/* 🔥 STREAK GLOW */
+.glow {
+  color: #22c55e;
+  text-shadow: 0 0 8px rgba(34,197,94,0.6);
+}
+
+</style>
 </head>
 
 <body>
@@ -100,10 +154,6 @@
       <button id="snackBtn">Snacks (5-day streak)</button>
       <button id="foodBtn">Food (≥500 pts)</button>
       <button id="restBtn">Restaurant (≥1500 pts)</button>
-
-      <hr>
-
-      <button id="resetBtn">Reset</button>
       
       
       
@@ -142,8 +192,20 @@
     
     // UI
     function updateUI() {
-      document.getElementById("points").innerText = points;
-      document.getElementById("streak").innerText = streak;
+      let pointsEl = document.getElementById("points");
+pointsEl.innerText = points;
+
+// animate points
+pointsEl.classList.add("pop");
+setTimeout(() => pointsEl.classList.remove("pop"), 200);
+      let streakEl = document.getElementById("streak");
+streakEl.innerText = streak;
+
+if (streak >= 3) {
+  streakEl.classList.add("glow");
+} else {
+  streakEl.classList.remove("glow");
+}
       document.getElementById("days").innerText = days;
       
       document.getElementById("lectures").innerText = lectures;
@@ -227,6 +289,9 @@
   } else {
     streak = 0;
   }
+  if (!(lectures >= 5 && revisions >= 5)) {
+  msg("⚠️ Streak will break!");
+}
   
   // 🔥 AUTO PENALTY SYSTEM
   
@@ -251,6 +316,10 @@ msg(message);
   revisions = 0;
   
   save();
+  if (lectures >= 5 && revisions >= 5) {
+  msg("🔥 Day Completed! Streak Increased!");
+  showFloat("🔥 +STREAK");
+}
 });
     
     // SHOP
@@ -285,34 +354,18 @@ msg(message);
     });
     
     updateUI();
-    document.getElementById("resetBtn").addEventListener("click", () => {
-
-  let confirmReset = confirm("This will reset everything. Start fresh?");
-  if (!confirmReset) return;
-
-  // wipe storage completely
-  localStorage.clear();
-
-  // reset variables
-  points = 0;
-  streak = 0;
-  days = 0;
-  lectures = 0;
-  revisions = 0;
-  totalLectures = 0;
-  totalRevisions = 0;
-  extraLectures = 0;
-
-  // update UI instantly
-  updateUI();
-
-  msg("Fresh start activated");
-});
     
+    function showFloat(text) {
+  let el = document.getElementById("floating");
+  el.innerText = text;
+  el.classList.remove("float");
+  void el.offsetWidth;
+  el.classList.add("float");
+}
   </script>
 
   
-  
+  <div id="floating"></div>
 </body>
 
 </html>
